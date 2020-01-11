@@ -38,9 +38,9 @@ def welcome():
     return (
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
-        f"/api/v1.0/stations<br/"
-        f"/api/v1.0/tobs<br/"
-        f"/api/v1.0/<start><br/"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/<start><br/>"
         f"/api/v1.0/<start>/<end>"
     )
 
@@ -69,6 +69,12 @@ def temp_monthly():
     results = session.query(Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date >= '2016-08-23').all()
     temps = list(np.ravel(results))
     return jsonify(temps)
+
+@app.route("/api/v1.0/<start>/<end>")
+def calc_temps(start, end):
+    
+    return jsonify(session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all())
+
 
 
 if __name__ == '__main__':
